@@ -10,6 +10,7 @@ if __name__ == "__main__":
 	data.pop(0)
 	aqData = {}
 	aqData["startTime"] = "2017-01-01 14:00:00"
+	aqData["endTime"] = "2018-03-31 16:00:00"
 
 	aqData["stationData"] = {}
 
