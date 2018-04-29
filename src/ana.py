@@ -1,6 +1,7 @@
 import pickle
-from matplotlib import pyplot as plt
+#from matplotlib import pyplot as plt
 from sklearn.linear_model import LinearRegression
+import numpy as np
 
 if __name__ == "__main__":
 	aqData = {}
@@ -9,19 +10,16 @@ if __name__ == "__main__":
 
 	l = aqData["stationData"]["aotizhongxin_aq"]
 
-	dat = []
+	datlist = []
 	for i in l:
-		dat.append(i["pm25"])
+		try:
+			datlist.append(float(i["pm25"]))
+		except:
+			datlist.append(0)
+	dat = np.array(datlist)
+	dat = dat.reshape(-1, 1)
 
-	dx = range(len(dat))
-	dy = dat
-
-	dat0 = dat[:-1]
-	dat1 = dat[1:]
-
-	linreg = LinearRegression()
-	linreg.fit(dat0,dat1)
-	print(linreg.coef_)
-	
-	
-	
+	a = dat[-48:]
+	dat = dat[:-48]
+	with open("tmp.pkl", "wb") as f:
+		pickle.dump(dat, f)
