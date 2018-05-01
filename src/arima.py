@@ -38,7 +38,6 @@ for st in bjsts:
 	td0 = []
 	td1 = []
 	td2 = []
-	l = len(dat)
 	for i in range(dd, l):
 		td0.append(d0[i] - d0[i - dd])
 		td1.append(d1[i] - d1[i - dd])
@@ -73,6 +72,53 @@ for st in bjsts:
 
 	for i in range(48):
 		res.append([st + "#" + str(i), tr0[i], tr1[i], tr2[i]])
+
+	with open("tmp.pkl", "wb") as f:
+		pickle.dump(res, f)
+
+with open("../pkl/beijing_data.pkl", "rb") as f:
+    data = pickle.load(f)
+
+for st in ldsts:
+	n0 = ldsts[st] * 3;
+	n1 = n0 + 1
+	d0 = data[n0].copy();
+	d1 = data[n1].copy();
+
+	l = len(d0)
+	dd = 24
+	td0 = []
+	td1 = []
+
+	for i in range(dd, l):
+		td0.append(d0[i] - d0[i - dd])
+		td1.append(d1[i] - d1[i - dd])
+
+	d0 = numpy.array(td0)
+	d1 = numpy.array(td1)
+
+	m0 = sm.tsa.ARMA(d0, (18, 3)).fit()
+	m1 = sm.tsa.ARMA(d1, (18, 3)).fit()
+
+	p0 = m0.predict(len(d0), len(d0) + 48, dynamic = True)
+	p1 = m1.predict(len(d1), len(d1) + 48, dynamic = True)
+
+	tr0 = []
+	for i in range(24):
+		tr0.append(p0[i] + data[n0][i - len(data[n0])])
+	for i in range(24):
+		tr0.append(p0[i + 24] + tr0[i])
+	tr1 = []
+	for i in range(24):
+		tr1.append(p1[i] + data[n1][i - len(data[n1])])
+	for i in range(24):
+		tr1.append(p1[i + 24] + tr1[i])
+
+	for i in range(48):
+		res.append([st + "#" + str(i), tr0[i], tr1[i]])
+
+	with open("tmp.pkl", "wb") as f:
+		pickle.dump(res, f)
 
 with open("../res/submit.csv", "w", newline = "") as f:
     writer = csv.writer(f)
