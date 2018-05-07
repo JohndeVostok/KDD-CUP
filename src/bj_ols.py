@@ -17,6 +17,7 @@ def getCoef(idx):
     linear = LinearRegression()
     linear.fit(px, py)
     res.append(linear.coef_)
+    res.append(linear.intercept_)
 
 if __name__ == "__main__":
     with open("../data/beijing_data.pkl", "rb") as f:
@@ -37,9 +38,9 @@ if __name__ == "__main__":
     res = []
 
     for st in aqstations:
-        getCoef(st * 5)
-        getCoef(st * 5 + 1)
-        getCoef(st * 5 + 4)
+        getCoef(aqstations[st] * 6)
+        getCoef(aqstations[st] * 6 + 1)
+        getCoef(aqstations[st] * 6 + 4)
 
     with open("../data/bjols_res.pkl", "wb") as f:
         pickle.dump(res, f)
