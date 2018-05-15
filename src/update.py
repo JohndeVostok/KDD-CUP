@@ -117,7 +117,7 @@ if __name__ == "__main__":
     for line in bj_aq_lines:
         line_splited = line.split(',')
         urltime = datetime.datetime.strptime(line_splited[2], '%Y-%m-%d %H:%M:%S')
-        urldelta = (urltime - beijing_starttime).days * 24 + urltime.hour - beijing_starttime.hour
+        urldelta = int((urltime - beijing_starttime).total_seconds() / 3600)
         row = aqstations[line_splited[1]] * n_types
         for i in range(6):
             if line_splited[3 + i]:
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     for line in bj_meo_lines:
         line_splited = line.split(',')
         urltime = datetime.datetime.strptime(line_splited[2], '%Y-%m-%d %H:%M:%S')
-        urldelta = (urltime - beijing_starttime).days * 24 + urltime.hour - beijing_starttime.hour
+        urldelta = int((urltime - beijing_starttime).total_seconds() / 3600)
         row = weatherstations[line_splited[1]] * n_meo
         for i in range(3):
             if line_splited[4 + i]:
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     for line in bj_grid_lines:
         line_splited = line.split(',')
         urltime = datetime.datetime.strptime(line_splited[2], '%Y-%m-%d %H:%M:%S')
-        urldelta = (urltime - beijing_starttime).days * 24 + urltime.hour - beijing_starttime.hour
+        urldelta = int((urltime - beijing_starttime).total_seconds() / 3600)
         stationid = line_splited[1]
         id_splited = stationid.split('_')
         row = n_aqstation * n_types + n_weatherstation * n_meo + int(id_splited[-1]) * n_meo
@@ -193,7 +193,7 @@ if __name__ == "__main__":
     for line in ld_aq_lines:
         line_splited = line.split(',')
         urltime = datetime.datetime.strptime(line_splited[2], '%Y-%m-%d %H:%M:%S')
-        urldelta = (urltime - london_starttime).days * 24 + urltime.hour - london_starttime.hour
+        urldelta = int((urltime - london_starttime).total_seconds() / 3600)
         row = london_stations[line_splited[1]] * london_n_types
         for i in range(3):
             if line_splited[3 + i]:
@@ -204,7 +204,7 @@ if __name__ == "__main__":
     for line in ld_grid_lines:
         line_splited = line.split(',')
         urltime = datetime.datetime.strptime(line_splited[2], '%Y-%m-%d %H:%M:%S')
-        urldelta = (urltime - london_starttime).days * 24 + urltime.hour - london_starttime.hour
+        urldelta = int((urltime - london_starttime).total_seconds() / 3600)
         stationid = line_splited[1]
         id_splited = stationid.split('_')
         row = london_n_types * (n_forecast_station + n_other_station) + int(id_splited[-1]) * n_meo
