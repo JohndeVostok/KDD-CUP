@@ -43,7 +43,7 @@ london_Length = (n_forecast_station + n_other_station) * 3 + london_n_grid * n_m
 
 if __name__ == "__main__":
 
-    endtimefp = open('../data/newendtime')
+    endtimefp = open('../data/endtime')
     beijing_str = endtimefp.readline()
     beijing_str = beijing_str[:-1]
     london_str = endtimefp.readline()
@@ -111,7 +111,7 @@ if __name__ == "__main__":
 
     bj_end_date = max(bj_end_dates)
 
-    bj_update_hours = 24 * (bj_end_date - beijing_starttime).days + 1 + bj_end_date.hour + 24 - beijing_starttime.hour
+    bj_update_hours = int((bj_end_date - beijing_starttime).total_seconds() / 3600) + 1
     bj_update_data  = np.zeros((Length, bj_update_hours), dtype=np.float32)
 
     for line in bj_aq_lines:
@@ -187,7 +187,7 @@ if __name__ == "__main__":
 
     ld_end_date = max(ld_end_dates)
 
-    ld_update_hours = 24 * (ld_end_date - london_starttime).days + 1 + ld_end_date.hour + 24 - london_starttime.hour
+    ld_update_hours = int((ld_end_date - london_starttime).total_seconds() / 3600) + 1
     ld_update_data = np.zeros((london_Length, ld_update_hours), dtype=np.float32)
 
     for line in ld_aq_lines:
@@ -214,18 +214,18 @@ if __name__ == "__main__":
 
     print('Update London Grid')
 
-    endtimefp = open('../data/newendtime', 'w')
+    endtimefp = open('../data/endtime', 'w')
     endtimefp.write(bj_end_date.strftime('%Y-%m-%d %H:%M:%S'))
     endtimefp.write('\n')
     endtimefp.write(ld_end_date.strftime('%Y-%m-%d %H:%M:%S'))
     endtimefp.write('\n')
     endtimefp.close()
 
-    beijingfp = open('../data/new_beijing_data.pkl', 'wb')
+    beijingfp = open('../data/beijing_data.pkl', 'wb')
     beijing_data = pickle.dump(np.concatenate((beijing_data, bj_update_data), axis=1), beijingfp)
     beijingfp.close()
 
-    londonfp = open('../data/new_london_data.pkl', 'wb')
+    londonfp = open('../data/london_data.pkl', 'wb')
     london_data = pickle.dump(np.concatenate((london_data, ld_update_data), axis=1), londonfp)
     londonfp.close()
 
