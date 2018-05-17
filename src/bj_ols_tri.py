@@ -1,7 +1,7 @@
 import pickle
 import numpy
 import time
-#from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 
 aqstations = {'dongsi_aq' : 0, 'tiantan_aq' : 1, 'guanyuan_aq' : 2, 'wanshouxigong_aq' : 3, 'aotizhongxin_aq' : 4,
@@ -16,37 +16,15 @@ aqstations = {'dongsi_aq' : 0, 'tiantan_aq' : 1, 'guanyuan_aq' : 2, 'wanshouxigo
 if __name__ == "__main__":
 	with open("../data/beijing_data.pkl", "rb") as f:
 		dat = pickle.load(f)
-
 	l = len(dat[4])
-	tmpdata = numpy.zeros(l - 24)
+	l = int(l / 48) * 48
 
-	for i in range(l - 24):
-		if dat[4][i + 24] == 0:
-			tmpdata[i] = 0
-		elif dat[4][i] == 0:
-			tmpdata[i] = 0
-		else:
-			tmpdata[i] = dat[4][i + 24] - dat[4][i]
-	
-	tmpnum = numpy.zeros(24)
-	tmpsum = numpy.zeros(24)
+	tmp = numpy.zeros(48)
+	for i in range(l):
+		tmp[i % 48] += dat[4][i]
+	for i in range(48):
+		tmp[i] /= l / 48
 
-	for i in range(l - 24):
-		if (tmpdata[i] != 0):
-			tmpnum[i % 24] += 1
-			tmpsum[i % 24] += tmpdata[i]
-
-	lp = 0
-	res = []
-	for i in dat[4]:
-		if (i == 0):
-			lp += 1
-		else:
-			if (lp != 0):
-				res.append(lp)
-			lp = 0
-	print(res)
-	s = sum([tmpsum[i] / tmpnum[i] for i in range(24)])
-	print(s)
-	plt.plot(range(24), [tmpsum[i] / tmpnum[i] for i in range(24)])
+	fig = plt.figure(figsize=(12,8))
+	plt.plot(range(48), tmp)
 	plt.show()
