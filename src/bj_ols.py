@@ -4,8 +4,8 @@ import time
 import math
 from sklearn.linear_model import LinearRegression
 
-aqstations = {'dongsi_aq' : 0}
-'''
+#aqstations = {'dongsi_aq' : 0}
+
 aqstations = {'dongsi_aq' : 0, 'tiantan_aq' : 1, 'guanyuan_aq' : 2, 'wanshouxigong_aq' : 3, 'aotizhongxin_aq' : 4,
 			'nongzhanguan_aq' : 5, 'wanliu_aq' : 6, 'beibuxinqu_aq' : 7, 'zhiwuyuan_aq' : 8, 'fengtaihuayuan_aq' : 9,
 			'yungang_aq' : 10, 'gucheng_aq' : 11, 'fangshan_aq' : 12, 'daxing_aq' : 13, 'yizhuang_aq' : 14,
@@ -14,14 +14,12 @@ aqstations = {'dongsi_aq' : 0, 'tiantan_aq' : 1, 'guanyuan_aq' : 2, 'wanshouxigo
 			'miyunshuiku_aq' : 25, 'donggaocun_aq' : 26, 'yongledian_aq' : 27, 'yufa_aq' : 28, 'liulihe_aq' : 29,
 			'qianmen_aq' : 30, 'yongdingmennei_aq' : 31, 'xizhimenbei_aq' : 32, 'nansanhuan_aq' : 33,
 			'dongsihuan_aq' : 34}
-'''
 
 def getCoef(idx):
 	py = tmpdata[24:]
 	linear = LinearRegression()
 	linear.fit(px, py)
-	res.append(linear.coef_)
-	res.append(linear.intercept_)
+	res.append([linear.coef_, linear.intercept_])
 
 if __name__ == "__main__":
 	with open("../data/beijing_data.pkl", "rb") as f:
@@ -47,12 +45,15 @@ if __name__ == "__main__":
 			px[i - 48][651 * 4] = math.sin(i / 12 * math.pi)
 			for j in range(1, 19):
 				px[i - 48][651 * 4 + j] = tmpdata[i - 24 - j]
-			if i % 100 == 0:
-				print(i)
 
 		res = []
-		print("init.")
+		print(st + "initialized.")
+		print("PM2.5")
+		getCoef(aqstations[st] * 6 + 0)
+		print("PM10")
 		getCoef(aqstations[st] * 6 + 1)
+		print("O3")
+		getCoef(aqstations[st] * 6 + 4)
 		print(st + "finished.")
 
 	with open("../data/bjols_res.pkl", "wb") as f:
