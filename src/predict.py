@@ -1,10 +1,10 @@
-import numpy as np
 import pickle
-import requests
+import math
 
-day = 7
+dt = 48
 
 bjst = {'dongsi_aq' : 0}
+ldst = {}
 
 '''
 bjst = {'dongsi_aq' : 0, 'tiantan_aq' : 1, 'guanyuan_aq' : 2, 'wanshouxigong_aq' : 3, 'aotizhongxin_aq' : 4,
@@ -15,33 +15,73 @@ bjst = {'dongsi_aq' : 0, 'tiantan_aq' : 1, 'guanyuan_aq' : 2, 'wanshouxigong_aq'
             'miyunshuiku_aq' : 25, 'donggaocun_aq' : 26, 'yongledian_aq' : 27, 'yufa_aq' : 28, 'liulihe_aq' : 29,
             'qianmen_aq' : 30, 'yongdingmennei_aq' : 31, 'xizhimenbei_aq' : 32, 'nansanhuan_aq' : 33,
             'dongsihuan_aq' : 34}
-'''
 
 ldst = {'BL0':0, 'CD1':1, 'CD9':2, 'GN0':3, 'GN3':4, 'GR4':5, 'GR9':6, 'HV1':7, 'KF1':8, 'LW2':9,
                    'ST5':10, 'TH4':11, 'MY7':12}
+'''
 
-def getans(idx, t, time):
-	ans = data[(idx * 3 + t) * 2 + 1]
-	for i in range(2064):
-		ans += tmp[time][i] * data[(idx * 3 + t) * 2][i]
-	return ans
+def getans(idx, idy):
+    ans = []
+    l = len(data[idx])
+    tmp = [0]
+    ori = []
+    for i in range(18):
+        tmp.append(data[idx][l - 18 + i] - data[idx][l - 42 + i])
+    for i in range(24):
+        ori.append(data[idx][l - 24 + i])
+    for i in range(dt):
+        tmp[0] = math.sin(l / 12 * math.pi)
+        t = ols[idy][1]
+        for j in range(19):
+            t += tmp[j] * ols[idy][0][j]
+        ans.append(t)
+        for j in range(1, 18):
+            tmp[j] = tmp[j + 1]
+            tmp[18] = t
+    print(ans[0], ori[0])
+    for i in range(24):
+        ans[i] += ori[i]
+    for i in range(24, dt):
+        ans[i] += ans[i - 24]
+    return ans
 
 if __name__ == "__main__":
-	with open("../data/bjols_res.pkl", "rb") as f:
-		data = pickle.load(f)
-	url = "http://kdd.caiyunapp.com/competition/forecast/bj/2018-05-" + str(day) + "-11/2k0d1d8"
-	resp = requests.get(url)
-	tmplist = resp.text.split("\r\n")
-	print(url)
-	print(len(tmplist))
+    res = []
+    with open("../data/beijing_data.pkl", "rb") as f:
+        data = pickle.load(f)
+    with open("../data/bjols_res.pkl", "rb") as f:
+        ols = pickle.load(f)
+    for st in bjst:
+        #PM2.5
+        idx = 6 * bjst[st] + 0
+        idy = 3 * bjst[st] + 0
+        tmp0 = getans(idx, idy);
+        #PM10
+        idx = 6 * bjst[st] + 1
+        idy = 3 * bjst[st] + 1
+        tmp1 = getans(idx, idy);
+        #O3
+        idx = 6 * bjst[st] + 4
+        idy = 3 * bjst[st] + 2
+        tmp2 = getans(idx, idy);
+        for i in range(48):
+            res.append(','.join([st + "#" + str(i), str(tmp0[dt - 48 + i]), str(tmp1[dt - 48 + i]), str(tmp2[dt - 48 + i])]) + "\n")
 
-	tmp = np.array([entry.split(",")[4:8] for entry in tmplist[1:-1]]).reshape((651, 48, 4)).swapaxes(0, 1).reshape(48, -1)
+    with open("../data/london_data.pkl", "rb") as f:
+        data = pickle.load(f)
+    with open("../data/ldols_res.pkl", "rb") as f:
+        ols = pickle.load(f)
+    for st in ldst:
+        #PM2.5
+        idx = 3 * ldst[st] + 0
+        idy = 2 * ldst[st] + 0
+        tmp0 = getans(idx, idy);
+        #PM10
+        idx = 3 * ldst[st] + 1
+        idy = 2 * ldst[st] + 1
+        tmp0 = getans(idx, idy);
+        for i in range(48):
+            res.append(','.join([st + "#" + str(i), str(tmp0[dt - 48 + i]), str(tmp1[dt - 48 + i]), str(tmp2[dt - 48 + i])]) + "\n")
 
-	for st in bjst:
-		for i in range(48):
-			tmppm25 = getans(bjst[st], 0, i)
-			tmppm10 = getans(bjst[st], 1, i)
-			tmpo3 = getans(bjst[st], 2, i)
-			res.append(','.join([st + "#" + str(i), tmppm25, tmppm10, tmpo3]) + "\n")
-	with open("tmpres.csv", "w") as f:
-		f.writelines(res)
+    with open("../data/tmpres.csv", "w") as f:
+        f.writelines(res)
