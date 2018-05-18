@@ -71,6 +71,7 @@ if __name__ == "__main__":
     bj_start_str = str(beijing_starttime.year) + '-' + str(beijing_starttime.month) + '-' + str(beijing_starttime.day) \
                     + '-' + str(beijing_starttime.hour)
     bj_aq_url = 'https://biendata.com/competition/airquality/bj/' + bj_start_str + '/' + current_str + SUFFIX
+    #print(bj_aq_url)
     bj_meo_url = 'https://biendata.com/competition/meteorology/bj/' + bj_start_str + '/' + current_str + SUFFIX
     bj_grid_url = 'https://biendata.com/competition/meteorology/bj_grid/' + bj_start_str + '/' + current_str + SUFFIX
 
@@ -109,7 +110,8 @@ if __name__ == "__main__":
         temptime = datetime.datetime.strptime(tempsplited[2], '%Y-%m-%d %H:%M:%S')
         bj_end_dates.append(temptime)
 
-    bj_end_date = max(bj_end_dates)
+    bj_end_date = min(bj_end_dates)
+    #print(bj_end_date)
 
     bj_update_hours = int((bj_end_date - beijing_starttime).total_seconds() / 3600) + 1
     bj_update_data  = np.zeros((Length, bj_update_hours), dtype=np.float32)
@@ -117,6 +119,8 @@ if __name__ == "__main__":
     for line in bj_aq_lines:
         line_splited = line.split(',')
         urltime = datetime.datetime.strptime(line_splited[2], '%Y-%m-%d %H:%M:%S')
+        if urltime > bj_end_date:
+            continue
         urldelta = int((urltime - beijing_starttime).total_seconds() / 3600)
         row = aqstations[line_splited[1]] * n_types
         for i in range(6):
@@ -125,11 +129,14 @@ if __name__ == "__main__":
 
     print('Update Beijing Air Quality')
 
+
     for line in bj_meo_lines:
         line_splited = line.split(',')
         urltime = datetime.datetime.strptime(line_splited[2], '%Y-%m-%d %H:%M:%S')
+        if urltime > bj_end_date:
+            continue
         urldelta = int((urltime - beijing_starttime).total_seconds() / 3600)
-        row = weatherstations[line_splited[1]] * n_meo
+        row = n_aqstation * n_types + weatherstations[line_splited[1]] * n_meo
         for i in range(3):
             if line_splited[4 + i]:
                 bj_update_data[row + i][urldelta] = float(line_splited[4 + i])
@@ -143,6 +150,8 @@ if __name__ == "__main__":
     for line in bj_grid_lines:
         line_splited = line.split(',')
         urltime = datetime.datetime.strptime(line_splited[2], '%Y-%m-%d %H:%M:%S')
+        if urltime > bj_end_date:
+            continue
         urldelta = int((urltime - beijing_starttime).total_seconds() / 3600)
         stationid = line_splited[1]
         id_splited = stationid.split('_')
@@ -152,7 +161,6 @@ if __name__ == "__main__":
                 bj_update_data[row + i][urldelta] = float(line_splited[4 + i])
 
     print('Update Beijing Grid')
-
 
     ### For London ###
 
@@ -185,7 +193,7 @@ if __name__ == "__main__":
         temptime = datetime.datetime.strptime(tempsplited[2], '%Y-%m-%d %H:%M:%S')
         ld_end_dates.append(temptime)
 
-    ld_end_date = max(ld_end_dates)
+    ld_end_date = min(ld_end_dates)
 
     ld_update_hours = int((ld_end_date - london_starttime).total_seconds() / 3600) + 1
     ld_update_data = np.zeros((london_Length, ld_update_hours), dtype=np.float32)
@@ -193,6 +201,8 @@ if __name__ == "__main__":
     for line in ld_aq_lines:
         line_splited = line.split(',')
         urltime = datetime.datetime.strptime(line_splited[2], '%Y-%m-%d %H:%M:%S')
+        if urltime > ld_end_date:
+            continue
         urldelta = int((urltime - london_starttime).total_seconds() / 3600)
         row = london_stations[line_splited[1]] * london_n_types
         for i in range(3):
@@ -204,6 +214,8 @@ if __name__ == "__main__":
     for line in ld_grid_lines:
         line_splited = line.split(',')
         urltime = datetime.datetime.strptime(line_splited[2], '%Y-%m-%d %H:%M:%S')
+        if urltime > ld_end_date:
+            continue
         urldelta = int((urltime - london_starttime).total_seconds() / 3600)
         stationid = line_splited[1]
         id_splited = stationid.split('_')
