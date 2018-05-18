@@ -4,8 +4,6 @@ import time
 import math
 from sklearn.linear_model import LinearRegression
 
-#aqstations = {'dongsi_aq' : 0}
-
 aqstations = {'dongsi_aq' : 0, 'tiantan_aq' : 1, 'guanyuan_aq' : 2, 'wanshouxigong_aq' : 3, 'aotizhongxin_aq' : 4,
 			'nongzhanguan_aq' : 5, 'wanliu_aq' : 6, 'beibuxinqu_aq' : 7, 'zhiwuyuan_aq' : 8, 'fengtaihuayuan_aq' : 9,
 			'yungang_aq' : 10, 'gucheng_aq' : 11, 'fangshan_aq' : 12, 'daxing_aq' : 13, 'yizhuang_aq' : 14,
@@ -34,27 +32,41 @@ if __name__ == "__main__":
 			px[i - 48][j * 4 + 2] = dat[300 + j * 5 + 2][i - 24]
 			px[i - 48][j * 4 + 3] = dat[300 + j * 5 + 4][i - 24]
 
-
+	res = []
 	for st in aqstations:
-		idx = aqstations[st]
+		print(st)
+		print("PM2.5")
+		idx = aqstations[st] * 6 + 0
 		tmpdata = numpy.zeros(l - 24)
 		for i in range(24, l):
 			tmpdata[i - 24] = dat[idx][i] - dat[idx][i - 24]
-
 		for i in range(48, l):
 			px[i - 48][651 * 4] = math.sin(i / 12 * math.pi)
 			for j in range(1, 19):
 				px[i - 48][651 * 4 + j] = tmpdata[i - 24 - j]
+		getCoef(idx)
 
-		res = []
-		print(st + "initialized.")
-		print("PM2.5")
-		getCoef(aqstations[st] * 6 + 0)
 		print("PM10")
-		getCoef(aqstations[st] * 6 + 1)
+		idx = aqstations[st] * 6 + 1
+		tmpdata = numpy.zeros(l - 24)
+		for i in range(24, l):
+			tmpdata[i - 24] = dat[idx][i] - dat[idx][i - 24]
+		for i in range(48, l):
+			px[i - 48][651 * 4] = math.sin(i / 12 * math.pi)
+			for j in range(1, 19):
+				px[i - 48][651 * 4 + j] = tmpdata[i - 24 - j]
+		getCoef(idx)
+		
 		print("O3")
-		getCoef(aqstations[st] * 6 + 4)
-		print(st + "finished.")
+		idx = aqstations[st] * 6 + 4
+		tmpdata = numpy.zeros(l - 24)
+		for i in range(24, l):
+			tmpdata[i - 24] = dat[idx][i] - dat[idx][i - 24]
+		for i in range(48, l):
+			px[i - 48][651 * 4] = math.sin(i / 12 * math.pi)
+			for j in range(1, 19):
+				px[i - 48][651 * 4 + j] = tmpdata[i - 24 - j]
+		getCoef(idx)
 
 	with open("../data/bjols_res.pkl", "wb") as f:
 		pickle.dump(res, f)
