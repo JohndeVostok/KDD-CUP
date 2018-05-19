@@ -234,11 +234,11 @@ if __name__ == "__main__":
     endtimefp.close()
 
     beijingfp = open('../data/beijing_data.pkl', 'wb')
-    beijing_data = pickle.dump(np.concatenate((beijing_data, bj_update_data), axis=1), beijingfp)
+    pickle.dump(np.concatenate((beijing_data, bj_update_data), axis=1), beijingfp)
     beijingfp.close()
 
     londonfp = open('../data/london_data.pkl', 'wb')
-    london_data = pickle.dump(np.concatenate((london_data, ld_update_data), axis=1), londonfp)
+    pickle.dump(np.concatenate((london_data, ld_update_data), axis=1), londonfp)
     londonfp.close()
 
     print(bj_end_date)
