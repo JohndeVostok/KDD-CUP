@@ -20,7 +20,7 @@ def getCoef(idx):
     for i in range(48, l):
         px[i - 48][0] = math.sin(i / 12 * math.pi)
         for j in range(1, 19):
-            px[i - 48][j] = tmpdata[i - 24 - j]
+            px[i - 48][j] = tmpdata[i - 42 + j]
     py = tmpdata[24:]
     linear = LinearRegression()
     linear.fit(px, py)

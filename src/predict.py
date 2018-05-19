@@ -30,14 +30,14 @@ def getans(idx, idy):
     for i in range(24):
         ori.append(data[idx][l - 24 + i])
     for i in range(dt):
-        tmp[0] = math.sin(l / 12 * math.pi)
+        tmp[0] = math.sin((l + i) / 12 * math.pi)
         t = ols[idy][1]
         for j in range(19):
             t += tmp[j] * ols[idy][0][j]
         ans.append(t)
         for j in range(1, 18):
             tmp[j] = tmp[j + 1]
-            tmp[18] = t
+        tmp[18] = t
     print(ans[0], ori[0])
     for i in range(24):
         ans[i] += ori[i]
