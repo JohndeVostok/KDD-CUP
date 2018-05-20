@@ -1,7 +1,8 @@
 import pickle
 import math
 
-dt = 62
+bj_dt = 58
+ld_dt = 59
 
 bjst = {'dongsi_aq' : 0, 'tiantan_aq' : 1, 'guanyuan_aq' : 2, 'wanshouxigong_aq' : 3, 'aotizhongxin_aq' : 4,
             'nongzhanguan_aq' : 5, 'wanliu_aq' : 6, 'beibuxinqu_aq' : 7, 'zhiwuyuan_aq' : 8, 'fengtaihuayuan_aq' : 9,
@@ -15,7 +16,7 @@ bjst = {'dongsi_aq' : 0, 'tiantan_aq' : 1, 'guanyuan_aq' : 2, 'wanshouxigong_aq'
 ldst = {'BL0':0, 'CD1':1, 'CD9':2, 'GN0':3, 'GN3':4, 'GR4':5, 'GR9':6, 'HV1':7, 'KF1':8, 'LW2':9,
                    'ST5':10, 'TH4':11, 'MY7':12}
 
-def getans(idx, idy):
+def getans(idx, idy, dt):
     ans = []
     l = len(data[idx])
     tmp = [0]
@@ -44,7 +45,7 @@ def getans(idx, idy):
     return ans
 
 if __name__ == "__main__":
-    res = ["test_id,PM2.5,PM10,O3"]
+    res = ["test_id,PM2.5,PM10,O3\n"]
     with open("../data/bj_clean.pkl", "rb") as f:
         data = pickle.load(f)
     with open("../data/bjols_res.pkl", "rb") as f:
@@ -53,17 +54,17 @@ if __name__ == "__main__":
         #PM2.5
         idx = 6 * bjst[st] + 0
         idy = 3 * bjst[st] + 0
-        tmp0 = getans(idx, idy);
+        tmp0 = getans(idx, idy, bj_dt);
         #PM10
         idx = 6 * bjst[st] + 1
         idy = 3 * bjst[st] + 1
-        tmp1 = getans(idx, idy);
+        tmp1 = getans(idx, idy, bj_dt);
         #O3
         idx = 6 * bjst[st] + 4
         idy = 3 * bjst[st] + 2
-        tmp2 = getans(idx, idy);
+        tmp2 = getans(idx, idy, bj_dt);
         for i in range(48):
-            res.append(','.join([st + "#" + str(i), str(tmp0[dt - 48 + i]), str(tmp1[dt - 48 + i]), str(tmp2[dt - 48 + i])]) + "\n")
+            res.append(','.join([st + "#" + str(i), str(tmp0[bj_dt - 48 + i]), str(tmp1[bj_dt - 48 + i]), str(tmp2[bj_dt - 48 + i])]) + "\n")
 
     with open("../data/ld_clean.pkl", "rb") as f:
         data = pickle.load(f)
@@ -73,13 +74,13 @@ if __name__ == "__main__":
         #PM2.5
         idx = 3 * ldst[st] + 0
         idy = 2 * ldst[st] + 0
-        tmp0 = getans(idx, idy);
+        tmp0 = getans(idx, idy, ld_dt);
         #PM10
         idx = 3 * ldst[st] + 1
         idy = 2 * ldst[st] + 1
-        tmp0 = getans(idx, idy);
+        tmp1 = getans(idx, idy, ld_dt);
         for i in range(48):
-            res.append(','.join([st + "#" + str(i), str(tmp0[dt - 48 + i]), str(tmp1[dt - 48 + i]), str(tmp2[dt - 48 + i])]) + "\n")
+            res.append(','.join([st + "#" + str(i), str(tmp0[ld_dt - 48 + i]), str(tmp1[ld_dt - 48 + i])]) + "\n")
 
     with open("../data/tmpres.csv", "w") as f:
         f.writelines(res)
