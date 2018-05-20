@@ -1,12 +1,8 @@
 import pickle
 import math
 
-dt = 48
+dt = 62
 
-bjst = {'dongsi_aq' : 0}
-ldst = {}
-
-'''
 bjst = {'dongsi_aq' : 0, 'tiantan_aq' : 1, 'guanyuan_aq' : 2, 'wanshouxigong_aq' : 3, 'aotizhongxin_aq' : 4,
             'nongzhanguan_aq' : 5, 'wanliu_aq' : 6, 'beibuxinqu_aq' : 7, 'zhiwuyuan_aq' : 8, 'fengtaihuayuan_aq' : 9,
             'yungang_aq' : 10, 'gucheng_aq' : 11, 'fangshan_aq' : 12, 'daxing_aq' : 13, 'yizhuang_aq' : 14,
@@ -18,7 +14,6 @@ bjst = {'dongsi_aq' : 0, 'tiantan_aq' : 1, 'guanyuan_aq' : 2, 'wanshouxigong_aq'
 
 ldst = {'BL0':0, 'CD1':1, 'CD9':2, 'GN0':3, 'GN3':4, 'GR4':5, 'GR9':6, 'HV1':7, 'KF1':8, 'LW2':9,
                    'ST5':10, 'TH4':11, 'MY7':12}
-'''
 
 def getans(idx, idy):
     ans = []
@@ -43,10 +38,13 @@ def getans(idx, idy):
         ans[i] += ori[i]
     for i in range(24, dt):
         ans[i] += ans[i - 24]
+    for i in range(len(ans)):
+    	if (ans[i] < 0):
+    		ans[i] = 0
     return ans
 
 if __name__ == "__main__":
-    res = []
+    res = ["test_id,PM2.5,PM10,O3"]
     with open("../data/beijing_data.pkl", "rb") as f:
         data = pickle.load(f)
     with open("../data/bjols_res.pkl", "rb") as f:
