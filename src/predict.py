@@ -45,7 +45,7 @@ def getans(idx, idy):
 
 if __name__ == "__main__":
     res = ["test_id,PM2.5,PM10,O3"]
-    with open("../data/beijing_data.pkl", "rb") as f:
+    with open("../data/bj_clean.pkl", "rb") as f:
         data = pickle.load(f)
     with open("../data/bjols_res.pkl", "rb") as f:
         ols = pickle.load(f)
@@ -65,7 +65,7 @@ if __name__ == "__main__":
         for i in range(48):
             res.append(','.join([st + "#" + str(i), str(tmp0[dt - 48 + i]), str(tmp1[dt - 48 + i]), str(tmp2[dt - 48 + i])]) + "\n")
 
-    with open("../data/london_data.pkl", "rb") as f:
+    with open("../data/ld_clean.pkl", "rb") as f:
         data = pickle.load(f)
     with open("../data/ldols_res.pkl", "rb") as f:
         ols = pickle.load(f)

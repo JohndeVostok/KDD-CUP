@@ -27,7 +27,7 @@ def getCoef(idx):
     res.append([linear.coef_, linear.intercept_])
 
 if __name__ == "__main__":
-    with open("../data/beijing_data.pkl", "rb") as f:
+    with open("../data/bj_clean.pkl", "rb") as f:
         dat = pickle.load(f)
     l = len(dat[0])
 
@@ -55,7 +55,7 @@ aqstations = {'BL0':0, 'CD1':1, 'CD9':2, 'GN0':3, 'GN3':4, 'GR4':5, 'GR9':6, 'HV
                    'ST5':10, 'TH4':11, 'MY7':12}
 
 if __name__ == "__main__":
-    with open("../data/london_data.pkl", "rb") as f:
+    with open("../data/ld_clean.pkl", "rb") as f:
         dat = pickle.load(f)
     l = len(dat[0])
 
