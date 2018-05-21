@@ -1,9 +1,6 @@
 import pickle
 import math
 
-bj_dt = 58
-ld_dt = 59
-
 bjst = {'dongsi_aq' : 0, 'tiantan_aq' : 1, 'guanyuan_aq' : 2, 'wanshouxigong_aq' : 3, 'aotizhongxin_aq' : 4,
             'nongzhanguan_aq' : 5, 'wanliu_aq' : 6, 'beibuxinqu_aq' : 7, 'zhiwuyuan_aq' : 8, 'fengtaihuayuan_aq' : 9,
             'yungang_aq' : 10, 'gucheng_aq' : 11, 'fangshan_aq' : 12, 'daxing_aq' : 13, 'yizhuang_aq' : 14,
@@ -19,22 +16,21 @@ ldst = {'BL0':0, 'CD1':1, 'CD9':2, 'GN0':3, 'GN3':4, 'GR4':5, 'GR9':6, 'HV1':7, 
 def getans(idx, idy, dt):
     ans = []
     l = len(data[idx])
-    tmp = [0]
     ori = []
     for i in range(18):
-        tmp.append(data[idx][l - 18 + i] - data[idx][l - 42 + i])
+        tmp[0][base + 1 + i] = data[idx][l - 18 + i] - data[idx][l - 42 + i]
     for i in range(24):
         ori.append(data[idx][l - 24 + i])
     for i in range(dt):
-        tmp[0] = math.sin((l + i) / 12 * math.pi)
         t = ols[idy][1]
-        for j in range(19):
-            t += tmp[j] * ols[idy][0][j]
+        for j in range(base + 19):
+            t += tmp[i][j] * ols[idy][0][j]
         ans.append(t)
-        for j in range(1, 18):
-            tmp[j] = tmp[j + 1]
-        tmp[18] = t
-    print(ans[0], ori[0])
+        if i + 1 < dt:
+            for j in range(1, 18):
+                tmp[i + 1][base + j] = tmp[i][base + j + 1]
+            tmp[i + 1][base + 18] = t
+    print(ans)
     for i in range(24):
         ans[i] += ori[i]
     for i in range(24, dt):
@@ -50,6 +46,10 @@ if __name__ == "__main__":
         data = pickle.load(f)
     with open("../data/bjols_res.pkl", "rb") as f:
         ols = pickle.load(f)
+    with open("../data/bj_forecast.pkl", "rb") as f:
+        tmp = pickle.load(f)
+    bj_dt = tmp.shape[0]
+    base = 651 * 4
     for st in bjst:
         #PM2.5
         idx = 6 * bjst[st] + 0
@@ -70,6 +70,10 @@ if __name__ == "__main__":
         data = pickle.load(f)
     with open("../data/ldols_res.pkl", "rb") as f:
         ols = pickle.load(f)
+    with open("../data/ld_forecast.pkl", "rb") as f:
+        tmp = pickle.load(f)
+    ld_dt = tmp.shape[0]
+    base = 861 * 4
     for st in ldst:
         #PM2.5
         idx = 3 * ldst[st] + 0

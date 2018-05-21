@@ -18,9 +18,9 @@ def getCoef(idx):
     for i in range(24, l):
         tmpdata[i - 24] = dat[idx][i] - dat[idx][i - 24]
     for i in range(48, l):
-        px[i - 48][0] = math.sin(i / 12 * math.pi)
+        px[i - 48][base] = math.sin(i / 12 * math.pi)
         for j in range(1, 19):
-            px[i - 48][j] = tmpdata[i - 42 + j]
+            px[i - 48][base + j] = tmpdata[i - 42 + j]
     py = tmpdata[24:]
     linear = LinearRegression()
     linear.fit(px, py)
@@ -30,9 +30,15 @@ if __name__ == "__main__":
     with open("../data/bj_clean.pkl", "rb") as f:
         dat = pickle.load(f)
     l = len(dat[0])
+    base = 651 * 4
 
-    px = numpy.zeros((l - 48, 19), dtype = numpy.float32)
-
+    px = numpy.zeros((l - 48, base + 19), dtype = numpy.float32)
+    for i in range(48, l):
+        for j in range(651):
+            px[i - 48][j * 4] = dat[300 + j * 5][i - 24]
+            px[i - 48][j * 4 + 1] = dat[300 + j * 5 + 1][i - 24]
+            px[i - 48][j * 4 + 2] = dat[300 + j * 5 + 2][i - 24]
+            px[i - 48][j * 4 + 3] = dat[300 + j * 5 + 4][i - 24]
     res = []
     for st in aqstations:
         print(st)
@@ -58,8 +64,15 @@ if __name__ == "__main__":
     with open("../data/ld_clean.pkl", "rb") as f:
         dat = pickle.load(f)
     l = len(dat[0])
+    base = 861 * 4
 
-    px = numpy.zeros((l - 48, 19), dtype = numpy.float32)
+    px = numpy.zeros((l - 48, base + 19), dtype = numpy.float32)
+    for i in range(48, l):
+        for j in range(861):
+            px[i - 48][j * 4] = dat[72 + j * 5][i - 24]
+            px[i - 48][j * 4 + 1] = dat[72 + j * 5 + 1][i - 24]
+            px[i - 48][j * 4 + 2] = dat[72 + j * 5 + 2][i - 24]
+            px[i - 48][j * 4 + 3] = dat[72 + j * 5 + 4][i - 24]
 
     res = []
     for st in aqstations:
