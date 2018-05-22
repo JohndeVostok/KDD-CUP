@@ -50,10 +50,6 @@ if __name__ == "__main__":
         idx = aqstations[st] * 6 + 1
         getCoef(idx)
         
-        print("O3")
-        idx = aqstations[st] * 6 + 4
-        getCoef(idx)
-
     with open("../data/bjols_res.pkl", "wb") as f:
         pickle.dump(res, f)
 
