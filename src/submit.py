@@ -2,7 +2,7 @@ import requests
 import sys
 
 if __name__ == "__main__":
-	filename = "../data/tmpres.csv"
+	filename = "../data/fixres.csv"
 	files = {
 		'files': open(filename, 'rb')
 	}

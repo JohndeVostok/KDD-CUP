@@ -79,7 +79,7 @@ if __name__ == "__main__":
         idy = 2 * ldst[st] + 1
         tmp1 = getans(idx, idy, ld_dt);
         for i in range(48):
-            res.append([tmp0[ld_dt - 48 + i], tmp1[ld_dt - 48 + i]]])
+            res.append([tmp0[ld_dt - 48 + i], tmp1[ld_dt - 48 + i]])
 
     with open("../data/ldtmpres.pkl", "wb") as f:
         pickle.dump(res, f)
